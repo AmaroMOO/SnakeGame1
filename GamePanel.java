@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,16 +14,16 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 
 public class GamePanel extends JPanel implements ActionListener {
-    private static final int TILE_SIZE = 25;
+    private static final int TILE_SIZE = 20; // Reduced tile size for smoother movement
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private static final int ALL_TILES = (WIDTH * HEIGHT) / (TILE_SIZE * TILE_SIZE);
-    private static final int DELAY = 140;
+    private static final int DELAY = 100; // Reduced delay for faster movement
 
     private final int[] x = new int[ALL_TILES];
     private final int[] y = new int[ALL_TILES];
 
-    private int bodyParts = 3;
+    private int bodyParts = 6; // Increased initial size of the snake
     private int foodEaten;
     private int foodX;
     private int foodY;
@@ -33,10 +32,6 @@ public class GamePanel extends JPanel implements ActionListener {
     private boolean running = false;
     private Timer timer;
     private Random random;
-
-    private Image apple;
-    private Image snakeHead;
-    private Image snakeBody;
 
     public GamePanel() {
         random = new Random();
@@ -70,14 +65,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
         });
-        loadImages();
         startGame();
-    }
-
-    private void loadImages() {
-        apple = new ImageIcon("images/apple.png").getImage();
-        snakeHead = new ImageIcon("images/snake_head.png").getImage();
-        snakeBody = new ImageIcon("images/snake_body.png").getImage();
     }
 
     private void startGame() {
@@ -99,34 +87,32 @@ public class GamePanel extends JPanel implements ActionListener {
         draw(g);
     }
 
+    private void drawBackground(Graphics g) {
+        for (int i = 0; i < WIDTH / TILE_SIZE; i++) {
+            for (int j = 0; j < HEIGHT / TILE_SIZE; j++) {
+                if ((i + j) % 2 == 0) {
+                    g.setColor(new Color(170, 215, 81)); // Light green
+                } else {
+                    g.setColor(new Color(162, 209, 73)); // Slightly darker green
+                }
+                g.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+    }
+
     private void draw(Graphics g) {
         if (running) {
-            g.drawImage(apple, foodX, foodY, this);
+            g.setColor(Color.RED);
+            g.fillRect(foodX, foodY, TILE_SIZE, TILE_SIZE);
 
+            g.setColor(Color.BLACK);
             for (int i = 0; i < bodyParts; i++) {
-                if (i == 0) {
-                    g.drawImage(snakeHead, x[i], y[i], this);
-                } else {
-                    g.drawImage(snakeBody, x[i], y[i], this);
-                }
+                g.fillRect(x[i], y[i], TILE_SIZE, TILE_SIZE);
             }
 
             Toolkit.getDefaultToolkit().sync();
         } else {
             gameOver(g);
-        }
-    }
-
-    private void drawBackground(Graphics g) {
-        for (int i = 0; i < WIDTH / TILE_SIZE; i++) {
-            for (int j = 0; j < HEIGHT / TILE_SIZE; j++) {
-                if ((i + j) % 2 == 0) {
-                    g.setColor(new Color(170, 215, 81));
-                } else {
-                    g.setColor(new Color(162, 209, 73));
-                }
-                g.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-            }
         }
     }
 
