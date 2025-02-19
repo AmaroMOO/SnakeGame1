@@ -1,5 +1,6 @@
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -35,11 +36,16 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private Color foodColor = Color.RED;
 
+    private JButton timeButton;
+    private JButton scoreButton;
+
     public GamePanel() {
         random = new Random();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
         setFocusable(true);
+        setLayout(null); // Use null layout to position buttons manually
+
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -67,6 +73,21 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
         });
+
+        timeButton = new JButton("Tiempo: 0s");
+        timeButton.setBounds(10, 10, 150, 30);
+        timeButton.setBackground(Color.RED);
+        timeButton.setForeground(Color.WHITE);
+        timeButton.setEnabled(false); // Disable button interaction
+        add(timeButton);
+
+        scoreButton = new JButton("Puntos: 0");
+        scoreButton.setBounds(170, 10, 150, 30);
+        scoreButton.setBackground(Color.RED);
+        scoreButton.setForeground(Color.WHITE);
+        scoreButton.setEnabled(false); // Disable button interaction
+        add(scoreButton);
+
         startGame();
     }
 
@@ -117,30 +138,17 @@ public class GamePanel extends JPanel implements ActionListener {
                 g.fillRect(x[i], y[i], TILE_SIZE, TILE_SIZE);
             }
 
-            drawScore(g);
+            updateScore();
             Toolkit.getDefaultToolkit().sync();
         } else {
             gameOver(g);
         }
     }
 
-    private void drawScore(Graphics g) {
+    private void updateScore() {
         long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-        String scoreText = "Tiempo: " + elapsedTime + "s  Puntos: " + foodEaten;
-        Font font = new Font("Helvetica", Font.BOLD, 20);
-        FontMetrics metrics = getFontMetrics(font);
-
-        int textWidth = metrics.stringWidth(scoreText);
-        int textHeight = metrics.getHeight();
-        int x = (WIDTH - textWidth) / 2;
-        int y = g.getFont().getSize();
-
-        g.setColor(Color.RED);
-        g.drawRect(x - 10, y - textHeight, textWidth + 20, textHeight + 10); // Draw red rectangle around the text
-
-        g.setColor(Color.WHITE);
-        g.setFont(font);
-        g.drawString(scoreText, x, y);
+        timeButton.setText("Tiempo: " + elapsedTime + "s");
+        scoreButton.setText("Puntos: " + foodEaten);
     }
 
     private void move() {
