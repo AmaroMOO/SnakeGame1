@@ -164,8 +164,8 @@ public class GamePanel extends JPanel implements ActionListener {
             foodEaten++;
             placeFood();
             // Increase speed by reducing the delay
-            int newDelay = Math.max(10, timer.getDelay() - 5); // Ensure delay doesn't go below 10ms
-            timer.setDelay(newDelay);
+            int newDelay = Math.max(10, timer.getDelay() - 0.5); // Ensure delay doesn't go below 10ms
+            timer.setDelay((int) newDelay);
 
             // Change food color every 10 apples
             if (foodEaten % 10 == 0) {
