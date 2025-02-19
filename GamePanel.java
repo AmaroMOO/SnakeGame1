@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private static final int ALL_TILES = (WIDTH * HEIGHT) / (TILE_SIZE * TILE_SIZE);
-    private static final int DELAY = 100; // Reduced delay for faster movement
+    private static final int INITIAL_DELAY = 100; // Initial delay for movement
 
     private final int[] x = new int[ALL_TILES];
     private final int[] y = new int[ALL_TILES];
@@ -71,7 +71,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private void startGame() {
         placeFood();
         running = true;
-        timer = new Timer(DELAY, this);
+        timer = new Timer(INITIAL_DELAY, this);
         timer.start();
     }
 
@@ -105,8 +105,12 @@ public class GamePanel extends JPanel implements ActionListener {
             g.setColor(Color.RED);
             g.fillRect(foodX, foodY, TILE_SIZE, TILE_SIZE);
 
-            g.setColor(Color.BLACK);
             for (int i = 0; i < bodyParts; i++) {
+                if (i == 0) {
+                    g.setColor(Color.WHITE); // Head of the snake
+                } else {
+                    g.setColor(Color.BLACK); // Body of the snake
+                }
                 g.fillRect(x[i], y[i], TILE_SIZE, TILE_SIZE);
             }
 
@@ -143,6 +147,9 @@ public class GamePanel extends JPanel implements ActionListener {
             bodyParts++;
             foodEaten++;
             placeFood();
+            // Increase speed by reducing the delay
+            int newDelay = Math.max(10, timer.getDelay() - 5); // Ensure delay doesn't go below 10ms
+            timer.setDelay(newDelay);
         }
     }
 
