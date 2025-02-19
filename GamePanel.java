@@ -27,11 +27,14 @@ public class GamePanel extends JPanel implements ActionListener {
     private int foodEaten;
     private int foodX;
     private int foodY;
+    private long startTime;
 
     private Direction direction = Direction.RIGHT;
     private boolean running = false;
     private Timer timer;
     private Random random;
+
+    private Color foodColor = Color.RED;
 
     public GamePanel() {
         random = new Random();
@@ -71,6 +74,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private void startGame() {
         placeFood();
         running = true;
+        startTime = System.currentTimeMillis();
         timer = new Timer(INITIAL_DELAY, this);
         timer.start();
     }
@@ -102,7 +106,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void draw(Graphics g) {
         if (running) {
-            g.setColor(Color.RED);
+            g.setColor(foodColor);
             g.fillRect(foodX, foodY, TILE_SIZE, TILE_SIZE);
 
             for (int i = 0; i < bodyParts; i++) {
@@ -114,10 +118,22 @@ public class GamePanel extends JPanel implements ActionListener {
                 g.fillRect(x[i], y[i], TILE_SIZE, TILE_SIZE);
             }
 
+            drawScore(g);
             Toolkit.getDefaultToolkit().sync();
         } else {
             gameOver(g);
         }
+    }
+
+    private void drawScore(Graphics g) {
+        long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+        String scoreText = "Time: " + elapsedTime + "s  Apples: " + foodEaten;
+        Font font = new Font("Helvetica", Font.BOLD, 20);
+        FontMetrics metrics = getFontMetrics(font);
+
+        g.setColor(Color.WHITE);
+        g.setFont(font);
+        g.drawString(scoreText, (WIDTH - metrics.stringWidth(scoreText)) / 2, g.getFont().getSize());
     }
 
     private void move() {
@@ -150,7 +166,21 @@ public class GamePanel extends JPanel implements ActionListener {
             // Increase speed by reducing the delay
             int newDelay = Math.max(10, timer.getDelay() - 5); // Ensure delay doesn't go below 10ms
             timer.setDelay(newDelay);
+
+            // Change food color every 10 apples
+            if (foodEaten % 10 == 0) {
+                foodColor = getRandomColor();
+            }
         }
+    }
+
+    private Color getRandomColor() {
+        Color[] colors = {Color.RED, Color.BLUE, Color.YELLOW, Color.ORANGE, Color.PINK, Color.MAGENTA, Color.CYAN};
+        Color newColor;
+        do {
+            newColor = colors[random.nextInt(colors.length)];
+        } while (newColor.equals(new Color(170, 215, 81)) || newColor.equals(new Color(162, 209, 73))); // Avoid green colors
+        return newColor;
     }
 
     private void checkCollisions() {
