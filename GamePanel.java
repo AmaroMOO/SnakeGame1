@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
-import javax.swing.ImageIcon;
 
 public class GamePanel extends JPanel implements ActionListener {
     private static final int TILE_SIZE = 20; // Reduced tile size for smoother movement
@@ -107,7 +106,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private void draw(Graphics g) {
         if (running) {
             g.setColor(foodColor);
-            g.fillRect(foodX, foodY, TILE_SIZE, TILE_SIZE);
+            g.fillOval(foodX, foodY, TILE_SIZE, TILE_SIZE); // Draw round apple
 
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
@@ -127,13 +126,21 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawScore(Graphics g) {
         long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-        String scoreText = "Time: " + elapsedTime + "s  Apples: " + foodEaten;
+        String scoreText = "Tiempo: " + elapsedTime + "s  Puntos: " + foodEaten;
         Font font = new Font("Helvetica", Font.BOLD, 20);
         FontMetrics metrics = getFontMetrics(font);
 
+        int textWidth = metrics.stringWidth(scoreText);
+        int textHeight = metrics.getHeight();
+        int x = (WIDTH - textWidth) / 2;
+        int y = g.getFont().getSize();
+
+        g.setColor(Color.RED);
+        g.drawRect(x - 10, y - textHeight, textWidth + 20, textHeight + 10); // Draw red rectangle around the text
+
         g.setColor(Color.WHITE);
         g.setFont(font);
-        g.drawString(scoreText, (WIDTH - metrics.stringWidth(scoreText)) / 2, g.getFont().getSize());
+        g.drawString(scoreText, x, y);
     }
 
     private void move() {
@@ -164,8 +171,8 @@ public class GamePanel extends JPanel implements ActionListener {
             foodEaten++;
             placeFood();
             // Increase speed by reducing the delay
-            int newDelay = Math.max(10, timer.getDelay() - 0.5); // Ensure delay doesn't go below 10ms
-            timer.setDelay((int) newDelay);
+            int newDelay = Math.max(10, timer.getDelay() - 1); // Ensure delay doesn't go below 10ms
+            timer.setDelay(newDelay);
 
             // Change food color every 10 apples
             if (foodEaten % 10 == 0) {
