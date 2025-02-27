@@ -77,18 +77,26 @@ public class GamePanel extends JPanel implements ActionListener {
         timeButton = new JButton("Tiempo: 0s");
         timeButton.setBackground(Color.RED);
         timeButton.setForeground(Color.WHITE);
+        timeButton.setFont(new Font("Arial", Font.BOLD, 20));
         timeButton.setEnabled(false); // Disable button interaction
+        timeButton.setOpaque(false);
+        timeButton.setContentAreaFilled(false);
+        timeButton.setBorderPainted(false);
         add(timeButton);
 
         scoreButton = new JButton("Puntos: 0");
         scoreButton.setBackground(Color.RED);
         scoreButton.setForeground(Color.WHITE);
+        scoreButton.setFont(new Font("Arial", Font.BOLD, 20));
         scoreButton.setEnabled(false); // Disable button interaction
+        scoreButton.setOpaque(false);
+        scoreButton.setContentAreaFilled(false);
+        scoreButton.setBorderPainted(false);
         add(scoreButton);
 
         // Center the buttons
-        int buttonWidth = 150;
-        int buttonHeight = 30;
+        int buttonWidth = 200;
+        int buttonHeight = 50;
         int spacing = 10;
         int totalWidth = (buttonWidth * 2) + spacing;
         int x = (WIDTH - totalWidth) / 2;
